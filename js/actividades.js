@@ -92,7 +92,7 @@ function verificarProvincia() {
     /* lo hacemos adentro de la función por la variable provinciaCorrect */
     const resultadoElement = document.getElementById("resultado");
     resultadoElement.textContent = "Provincia elegida: " + provinciaCorrect;
-    
+ 
 }
 
 // Función para obtener la latitud y longitud de la provincia por el nombre de la provincia
@@ -149,3 +149,7 @@ function obtenerClima(lat, lon) {
 
 // Llama a la función para obtener las provincias
 obtenerProvincias();
+
+//boton     
+const reiniciarBtn = document.getElementById("reiniciarBtn");
+reiniciarBtn.addEventListener("click", obtenerProvincias); //evento click llamamos a la función de nuevo

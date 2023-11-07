@@ -13,11 +13,13 @@ function primeraMayuscula(texto) {
         if (palabra.length === 0) {
             return palabra;  // Maneja palabras vacías
         }
+        /* console.log(palabra) */
         return palabra.charAt(0).toUpperCase() + palabra.slice(1);//toma el primer caracter(0), le aplica uppercase y se concatena con la palabra en la posición 1
         //hace un map de las palabras capitaliza a cada palabra y lo devuelve en palabrasCapitalizadas
     });
 
     // Une las palabras capitalizadas de nuevo en una cadena
+    /*  console.log(palabrasCapitalizadas) */
     return palabrasCapitalizadas.join(" ");
 
 }
@@ -63,6 +65,7 @@ function obtenerProvincias() {
             console.error("Error al obtener datos de la API:", error);
         });
 
+
 }
 
 // Función para ingresar y verificar la provincia ingresada por prompt
@@ -78,8 +81,12 @@ function verificarProvincia() {
     }
 
     // Verifica si la provincia ingresada está en el array de provincias y si no es nula
-    while (!provincias.includes(provinciaCorrect) || provinciaCorrect === null) {
+    while (!provinciaCorrect || !provincias.includes(provinciaCorrect)) {
         provinciaElegida = prompt("Ingresa una provincia válida: ");
+        if (provinciaElegida === null) {
+            // El usuario presionó "Cancelar", salir del bucle
+            break;
+        }
         provinciaCorrect = primeraMayuscula(provinciaElegida);
         provinciaCorrect = corregirTildes(provinciaCorrect);
     }
@@ -90,9 +97,19 @@ function verificarProvincia() {
 
     /* PASAMOS LOS DATOS AL FRONT */
     /* lo hacemos adentro de la función por la variable provinciaCorrect */
-    const resultadoElement = document.getElementById("resultado");
-    resultadoElement.textContent = "Provincia elegida: " + provinciaCorrect;
- 
+    if (provinciaCorrect) {
+        const resultadoElement = document.getElementById("resultado");
+        resultadoElement.textContent = "Provincia elegida: " + provinciaCorrect;
+    } else {
+        const resultadoElement = document.getElementById("resultado");
+        resultadoElement.textContent = "Provincia elegida: " + "Ninguna";
+        const climaInfo = document.getElementById('climaInfo');
+        climaInfo.innerHTML = `<p></p>`;
+    }
+    generarListado();
+
+
+
 }
 
 // Función para obtener la latitud y longitud de la provincia por el nombre de la provincia
@@ -106,8 +123,10 @@ function obtenerLatLonDeProvincia(provincia) {
             //si la provincia existe en la data
             const provinciaData = data.provincias[0];
             if (provinciaData) {
+                const nombre = provinciaData.nombre
                 const lat = provinciaData.centroide.lat;
                 const lon = provinciaData.centroide.lon;
+                console.log(nombre);
                 console.log("Latitud: " + lat);
                 console.log("Longitud: " + lon);
 
@@ -150,6 +169,61 @@ function obtenerClima(lat, lon) {
 // Llama a la función para obtener las provincias
 obtenerProvincias();
 
+
 //boton     
 const reiniciarBtn = document.getElementById("reiniciarBtn");
 reiniciarBtn.addEventListener("click", obtenerProvincias); //evento click llamamos a la función de nuevo
+
+// Variable global para almacenar el valor seleccionado en el listado
+let provinciaSeleccionada = null;
+// Función para generar un listado seleccionable de provincias
+function generarListado() {
+    const listado = document.getElementById("listado");
+
+    // Crea un elemento <select> (lista desplegable)
+    const selectElement = document.createElement("select");
+
+    // Agrega un identificador (id) y un nombre (name) al elemento <select>
+    selectElement.id = "provinciaSelect";
+    selectElement.name = "provinciaSelect";
+
+    // titulo
+    listado.innerHTML = `<p>Elegí una Provincia de la lista</p>`;
+
+    // Crea una opción por cada provincia en el array provincias
+    provincias.forEach(provincia => {
+        const optionElement = document.createElement("option");
+        optionElement.value = provincia;
+        optionElement.textContent = provincia;
+        selectElement.appendChild(optionElement);
+    });
+
+    // Agrega un evento para almacenar la provincia seleccionada
+    selectElement.addEventListener("change", () => {
+        provinciaSeleccionada = selectElement.value;
+    });
+
+    // Agrega el elemento <select> al listado
+    listado.appendChild(selectElement);
+
+    // Evento para obtener el clima al hacer clic en el botón
+    const obtenerClimaBtn = document.getElementById("obtenerClimaBtn");
+    obtenerClimaBtn.addEventListener("click", obtenerClimaSeleccionada);
+
+    // Función para obtener el clima de la provincia seleccionada
+    function obtenerClimaSeleccionada() {
+        if (provinciaSeleccionada) {
+            // Llama a la función para obtener la latitud y longitud de la provincia seleccionada
+            obtenerLatLonDeProvincia(provinciaSeleccionada);
+
+            //pasar el nombre al front
+            const resultadoElement = document.getElementById("resultado");
+            resultadoElement.textContent = "Provincia elegida: " + provinciaSeleccionada;
+        }
+
+    }
+
+}
+
+
+

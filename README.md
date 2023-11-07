@@ -7,4 +7,5 @@ Primera entrega: 23/10/2023
 repo: https://github.com/alvarosopena/coder-js
 deploy at: https://alvarosopenafigueroa-coder-js.netlify.app/
 
-Errores al 23/10 : Errores en pase de lat y long en provincias compuestas(aparece Córdoba si pasamos por ej Santa Cruz o Santa Fe), error al pasar Santiago del Estero (se pasa "del" capitalizada).
+Segunda entrega: 07/11/2023
+Se agrega el listado de provincias para elegir en el front y conseguir los datos a través de la API

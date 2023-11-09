@@ -1,6 +1,17 @@
 /* PROYECTO CLIMA CIUDADES A TRAVÉS DE API https://openweathermap.org/api VALIDANDO EL NOMBRE CORRECTO PARA SACAR LA LAT Y LON DE LAS PROVINCIAS A TRAVES DE API "https://apis.datos.gob.ar/georef/api/provincias"; 
 */
 
+// Variable global para almacenar el valor seleccionado en el listado
+let provinciaSeleccionada = null;
+let temperaturaCelsius = null;
+
+
+//botones
+const obtenerClimaBtn = document.getElementById("obtenerClimaBtn");
+const reiniciarBtn = document.getElementById("reiniciarBtn");
+//evento click llamamos a la función de nuevo
+reiniciarBtn.addEventListener("click", obtenerProvincias);
+
 // Función para capitalizar la primera letra de cada palabra en una cadena
 function primeraMayuscula(texto) {
     if (texto == null) {
@@ -132,6 +143,8 @@ function obtenerLatLonDeProvincia(provincia) {
 
                 // Llama la función obtenerClima() con latitud y longitud como parámetros
                 obtenerClima(lat, lon);
+                // Guardar en localStorage
+                localStorage.setItem('provincia', nombre);
             } else {
                 console.log("Provincia no encontrada.");
             }
@@ -157,25 +170,44 @@ function obtenerClima(lat, lon) {
         .then(response => response.json())
         .then(data => {
             console.log(data);
-            const temperaturaCelsius = data.current.temp.toFixed(2); // Temperatura con dos decimales
+            temperaturaCelsius = data.current.temp.toFixed(2); // Temperatura con dos decimales
+            console.log(temperaturaCelsius);
             const climaInfo = document.getElementById('climaInfo');
             climaInfo.innerHTML = `<p>Temperatura actual: ${temperaturaCelsius}°C</p>`;
+            // Guardar clima en localStorage
+            localStorage.setItem('temperaturaCelsius', temperaturaCelsius);
+
+            //Guardar la fecha de busqueda
+            const obtenerFechaActual = () => {
+                const fechaActual = new Date();
+
+                // Obtener día, mes y año
+                const dia = String(fechaActual.getDate()).padStart(2, '0');
+                const mes = String(fechaActual.getMonth() + 1).padStart(2, '0'); // ¡Ojo! Los meses en JavaScript van de 0 a 11
+                const anio = fechaActual.getFullYear();
+
+                // Formatear la fecha como "DD/MM/AAAA"
+                const fechaFormateada = `${dia}/${mes}/${anio}`;
+
+                return fechaFormateada;
+
+                
+            };
+
+            const fechaActual = obtenerFechaActual();
+            localStorage.setItem('fechaActual', fechaActual);
+
         })
         .catch(error => {
             console.error('Error al obtener datos del clima', error);
         });
+
 }
 
 // Llama a la función para obtener las provincias
 obtenerProvincias();
 
 
-//boton     
-const reiniciarBtn = document.getElementById("reiniciarBtn");
-reiniciarBtn.addEventListener("click", obtenerProvincias); //evento click llamamos a la función de nuevo
-
-// Variable global para almacenar el valor seleccionado en el listado
-let provinciaSeleccionada = null;
 // Función para generar un listado seleccionable de provincias
 function generarListado() {
     const listado = document.getElementById("listado");
@@ -195,6 +227,7 @@ function generarListado() {
         const optionElement = document.createElement("option");
         optionElement.value = provincia;
         optionElement.textContent = provincia;
+        //lo agrego al listado
         selectElement.appendChild(optionElement);
     });
 
@@ -207,7 +240,7 @@ function generarListado() {
     listado.appendChild(selectElement);
 
     // Evento para obtener el clima al hacer clic en el botón
-    const obtenerClimaBtn = document.getElementById("obtenerClimaBtn");
+
     obtenerClimaBtn.addEventListener("click", obtenerClimaSeleccionada);
 
     // Función para obtener el clima de la provincia seleccionada
@@ -226,4 +259,12 @@ function generarListado() {
 }
 
 
+function guardarAnterior() {
+    const resultadoAnteriorElement = document.getElementById("resultadoAnterior");
+    const temp = localStorage.getItem("temperaturaCelsius");
+    const nombre = localStorage.getItem("provincia");
+    const dia = localStorage.getItem("fechaActual");
+    resultadoAnteriorElement.textContent = "El día " + dia +" "+ "para la provincia de " + nombre + " " + "y hacían: " + temp + "°C";
+}
 
+obtenerClimaBtn.addEventListener("click", guardarAnterior); guardarAnterior();

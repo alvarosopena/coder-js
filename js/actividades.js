@@ -191,7 +191,7 @@ function obtenerClima(lat, lon) {
 
                 return fechaFormateada;
 
-                
+
             };
 
             const fechaActual = obtenerFechaActual();
@@ -258,13 +258,13 @@ function generarListado() {
 
 }
 
-
-function guardarAnterior() {
+// Función para 
+function recuperarAnterior() {
     const resultadoAnteriorElement = document.getElementById("resultadoAnterior");
     const temp = localStorage.getItem("temperaturaCelsius");
     const nombre = localStorage.getItem("provincia");
     const dia = localStorage.getItem("fechaActual");
-    resultadoAnteriorElement.textContent = "El día " + dia +" "+ "para la provincia de " + nombre + " " + "y hacían: " + temp + "°C";
+    resultadoAnteriorElement.textContent = "El día " + dia + " " + "para la provincia de " + nombre + " " + "y hacían: " + temp + "°C";
 }
 
-obtenerClimaBtn.addEventListener("click", guardarAnterior); guardarAnterior();
+recuperarAnterior();

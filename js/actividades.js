@@ -173,7 +173,30 @@ function obtenerClima(lat, lon) {
             temperaturaCelsius = data.current.temp.toFixed(2); // Temperatura con dos decimales
             console.log(temperaturaCelsius);
             const climaInfo = document.getElementById('climaInfo');
-            climaInfo.innerHTML = `<p>Temperatura actual: ${temperaturaCelsius}°C</p>`;
+
+            // Define las condiciones y asigna los iconos correspondientes
+            let icono = "";
+            let mensaje = "";
+
+            if (temperaturaCelsius < 5) {
+                icono = "❄️❄️"; // Icono de frío
+                mensaje = "Hace muuucho frío!";
+            } else if (temperaturaCelsius >= 5 && temperaturaCelsius <= 15) {
+                icono = "❄️"; // Icono de templado
+                mensaje = "Esta fresco!";
+            } 
+            else if (temperaturaCelsius >= 15 && temperaturaCelsius <= 27) {
+                icono = "🌡️"; // Icono de templado
+                mensaje = "Temperatura agradable!";
+            }
+            else {
+                icono = "☀️"; // Icono de calor
+                mensaje = "Hace calor!";
+            }
+
+            // Genera el HTML dinámicamente con el mensaje y el icono
+            climaInfo.innerHTML = `<p>${mensaje} Temperatura actual: ${temperaturaCelsius}°C ${icono}</p>`;
+
             // Guardar clima en localStorage
             localStorage.setItem('temperaturaCelsius', temperaturaCelsius);
 
@@ -188,9 +211,7 @@ function obtenerClima(lat, lon) {
 
                 // Formatear la fecha como "DD/MM/AAAA"
                 const fechaFormateada = `${dia}/${mes}/${anio}`;
-
                 return fechaFormateada;
-
 
             };
 
@@ -220,7 +241,7 @@ function generarListado() {
     selectElement.name = "provinciaSelect";
 
     // titulo
-    listado.innerHTML = `<p>Elegí una Provincia de la lista</p>`;
+    /*     listado.innerHTML = `<p>Elegí una Provincia de la lista</p>`; */
 
     // Crea una opción por cada provincia en el array provincias
     provincias.forEach(provincia => {

@@ -1,5 +1,7 @@
 /* PROYECTO CLIMA CIUDADES A TRAVÉS DE API https://openweathermap.org/api VALIDANDO EL NOMBRE CORRECTO PARA SACAR LA LAT Y LON DE LAS PROVINCIAS A TRAVES DE API "https://apis.datos.gob.ar/georef/api/provincias"; 
 */
+// Importar Luxon para fechas y horarios
+const { DateTime } = luxon;
 
 // Variable global para almacenar el valor seleccionado en el listado
 let provinciaSeleccionada = null;
@@ -178,45 +180,56 @@ function obtenerClima(lat, lon) {
             let icono = "";
             let mensaje = "";
 
+
             if (temperaturaCelsius < 5) {
-                icono = "❄️❄️"; // Icono de frío
+                icono = "❄️❄️";
                 mensaje = "Hace muuucho frío!";
             } else if (temperaturaCelsius >= 5 && temperaturaCelsius <= 15) {
-                icono = "❄️"; // Icono de templado
+                icono = "❄️";
                 mensaje = "Esta fresco!";
-            } 
+            }
             else if (temperaturaCelsius >= 15 && temperaturaCelsius <= 27) {
-                icono = "🌡️"; // Icono de templado
+                icono = "🌡️";
                 mensaje = "Temperatura agradable!";
             }
             else {
-                icono = "☀️"; // Icono de calor
+                icono = "☀️";
                 mensaje = "Hace calor!";
             }
 
-            // Genera el HTML dinámicamente con el mensaje y el icono
-            climaInfo.innerHTML = `<p>${mensaje} Temperatura actual: ${temperaturaCelsius}°C ${icono}</p>`;
+
 
             // Guardar clima en localStorage
             localStorage.setItem('temperaturaCelsius', temperaturaCelsius);
 
-            //Guardar la fecha de busqueda
+
+            //Funcion guardar la fecha de búsqueda
             const obtenerFechaActual = () => {
-                const fechaActual = new Date();
+                // Obtener la fecha actual
+                const fechaActual = DateTime.now().toFormat('dd/LL/yyyy');
+                const horario = DateTime.now().toFormat('HH:mm');
+                //guardamos horario
+                localStorage.setItem('horario', horario);
 
-                // Obtener día, mes y año
-                const dia = String(fechaActual.getDate()).padStart(2, '0');
-                const mes = String(fechaActual.getMonth() + 1).padStart(2, '0'); // ¡Ojo! Los meses en JavaScript van de 0 a 11
-                const anio = fechaActual.getFullYear();
-
-                // Formatear la fecha como "DD/MM/AAAA"
-                const fechaFormateada = `${dia}/${mes}/${anio}`;
-                return fechaFormateada;
-
+                // Genera el HTML dinámicamente con el mensaje y el icono
+                climaInfo.innerHTML = `<div class="text-center">
+                <div class="container mt-4">
+                <div class="card">
+                    <div class="card-body">
+                        <p class="card-title">${icono}</p>
+                        <p class="card-text">${mensaje}</p>
+                        <p class="card-text">Temperatura el día ${fechaActual} a las ${horario}: <br> ${temperaturaCelsius}°C</p>
+                    </div>
+                </div>
+            </div>`;
+            
+                return fechaActual;
             };
 
+            // Obtener la fecha actual y guardarla en localStorage
             const fechaActual = obtenerFechaActual();
             localStorage.setItem('fechaActual', fechaActual);
+
 
         })
         .catch(error => {
@@ -231,6 +244,7 @@ obtenerProvincias();
 
 // Función para generar un listado seleccionable de provincias
 function generarListado() {
+
     const listado = document.getElementById("listado");
 
     // Crea un elemento <select> (lista desplegable)
@@ -243,8 +257,12 @@ function generarListado() {
     // titulo
     /*     listado.innerHTML = `<p>Elegí una Provincia de la lista</p>`; */
 
+    // Agregar la opción "Selecciona acá!" al principio del array de provincias
+    const provinciasList = ["Selecciona acá!", ...provincias];
+
     // Crea una opción por cada provincia en el array provincias
-    provincias.forEach(provincia => {
+
+    provinciasList.forEach(provincia => {
         const optionElement = document.createElement("option");
         optionElement.value = provincia;
         optionElement.textContent = provincia;
@@ -263,29 +281,34 @@ function generarListado() {
     // Evento para obtener el clima al hacer clic en el botón
 
     obtenerClimaBtn.addEventListener("click", obtenerClimaSeleccionada);
+    listado = true
 
-    // Función para obtener el clima de la provincia seleccionada
-    function obtenerClimaSeleccionada() {
-        if (provinciaSeleccionada) {
-            // Llama a la función para obtener la latitud y longitud de la provincia seleccionada
-            obtenerLatLonDeProvincia(provinciaSeleccionada);
+}
 
-            //pasar el nombre al front
-            const resultadoElement = document.getElementById("resultado");
-            resultadoElement.textContent = "Provincia elegida: " + provinciaSeleccionada;
-        }
+// Función para obtener el clima de la provincia seleccionada
+function obtenerClimaSeleccionada() {
+    if (provinciaSeleccionada) {
+        // Llama a la función para obtener la latitud y longitud de la provincia seleccionada
+        obtenerLatLonDeProvincia(provinciaSeleccionada);
 
+        //pasar el nombre al front
+        const resultadoElement = document.getElementById("resultado");
+        resultadoElement.textContent = "Provincia elegida: " + provinciaSeleccionada;
     }
 
 }
+
+
 
 // Función para 
 function recuperarAnterior() {
     const resultadoAnteriorElement = document.getElementById("resultadoAnterior");
     const temp = localStorage.getItem("temperaturaCelsius");
+    const horario = localStorage.getItem("horario")
     const nombre = localStorage.getItem("provincia");
     const dia = localStorage.getItem("fechaActual");
-    resultadoAnteriorElement.textContent = "El día " + dia + " " + "para la provincia de " + nombre + " " + "y hacían: " + temp + "°C";
+
+    resultadoAnteriorElement.textContent = "El día " + dia + " " + "a la hora " + horario + " para la provincia de " + nombre + " " + "y hacían: " + temp + "°C";
 }
 
 recuperarAnterior();

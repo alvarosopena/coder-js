@@ -7,7 +7,7 @@ const { DateTime } = luxon;
 let provinciaSeleccionada = null;
 let temperaturaCelsius = null;
 
-
+let generarListadoEjecutado = false;
 //botones
 const obtenerClimaBtn = document.getElementById("obtenerClimaBtn");
 const reiniciarBtn = document.getElementById("reiniciarBtn");
@@ -112,14 +112,21 @@ function verificarProvincia() {
     /* lo hacemos adentro de la función por la variable provinciaCorrect */
     if (provinciaCorrect) {
         const resultadoElement = document.getElementById("resultado");
-        resultadoElement.textContent = "Provincia elegida: " + provinciaCorrect;
+        resultadoElement.innerHTML = `<div class="text-center"> <h2> ${provinciaCorrect} </h2> </div>`
+
     } else {
         const resultadoElement = document.getElementById("resultado");
         resultadoElement.textContent = "Provincia elegida: " + "Ninguna";
         const climaInfo = document.getElementById('climaInfo');
         climaInfo.innerHTML = `<p></p>`;
     }
-    generarListado();
+
+
+    // Ejecutar generarListado() solo si aún no se ha ejecutado
+    if (!generarListadoEjecutado) {
+        generarListado();
+        generarListadoEjecutado = true; // Marcar como ejecutado
+    }
 
 
 
@@ -222,7 +229,7 @@ function obtenerClima(lat, lon) {
                     </div>
                 </div>
             </div>`;
-            
+
                 return fechaActual;
             };
 
@@ -254,9 +261,6 @@ function generarListado() {
     selectElement.id = "provinciaSelect";
     selectElement.name = "provinciaSelect";
 
-    // titulo
-    /*     listado.innerHTML = `<p>Elegí una Provincia de la lista</p>`; */
-
     // Agregar la opción "Selecciona acá!" al principio del array de provincias
     const provinciasList = ["Selecciona acá!", ...provincias];
 
@@ -279,21 +283,20 @@ function generarListado() {
     listado.appendChild(selectElement);
 
     // Evento para obtener el clima al hacer clic en el botón
-
     obtenerClimaBtn.addEventListener("click", obtenerClimaSeleccionada);
-    listado = true
+
 
 }
 
 // Función para obtener el clima de la provincia seleccionada
-function obtenerClimaSeleccionada() {
+function obtenerClimaSeleccionada(provincia) {
     if (provinciaSeleccionada) {
         // Llama a la función para obtener la latitud y longitud de la provincia seleccionada
         obtenerLatLonDeProvincia(provinciaSeleccionada);
 
         //pasar el nombre al front
         const resultadoElement = document.getElementById("resultado");
-        resultadoElement.textContent = "Provincia elegida: " + provinciaSeleccionada;
+        resultadoElement.innerHTML = `<div class="text-center"> <h2> ${provinciaSeleccionada} </h2> </div>`
     }
 
 }

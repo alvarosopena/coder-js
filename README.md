@@ -12,3 +12,5 @@ Se agrega el listado de provincias para elegir en el front y conseguir los datos
 
 Tercera entrega: 23/11/2023
 Se agrega bootstrap para el diseño, luxor para fecha y hora, se arregla la función que duplicaba el listado con el array de provincias, y se agrega la opcion "selecciona aca!", también se agrega localstorage para guardar la ultima busqueda.
+
+Última entrega: 8/12/2023

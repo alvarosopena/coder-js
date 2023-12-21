@@ -69,8 +69,6 @@ function verificarProvincia() {
         provinciaCorrect = corregirTildes(provinciaCorrect.trim());
     }
 
-
-
     obtenerLatLonDeProvincia(provinciaCorrect);
 
     if (provinciaCorrect) {

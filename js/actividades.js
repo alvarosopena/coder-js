@@ -61,7 +61,7 @@ function obtenerProvincias() {
 }
 
 function verificarProvincia() {
-    let provinciaElegida = prompt("Ingresa una provincia: ");
+    let provinciaElegida = "";
     let provinciaCorrect = "";
 
     provinciaCorrect = primeraMayuscula(provinciaElegida);
@@ -69,14 +69,6 @@ function verificarProvincia() {
         provinciaCorrect = corregirTildes(provinciaCorrect.trim());
     }
 
-    while (!provinciaCorrect || !provincias.includes(provinciaCorrect)) {
-        provinciaElegida = prompt("Ingresa una provincia válida: ");
-        if (provinciaElegida === null) {
-            break;
-        }
-        provinciaCorrect = primeraMayuscula(provinciaElegida);
-        provinciaCorrect = corregirTildes(provinciaCorrect);
-    }
 
     obtenerLatLonDeProvincia(provinciaCorrect);
 
